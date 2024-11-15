@@ -87,7 +87,6 @@ class MainActivity : AppCompatActivity() {
             }
         }
 
-
         createNotificationChannel()
 
         buildNotificationStyle1()
@@ -95,10 +94,9 @@ class MainActivity : AppCompatActivity() {
         buildNotificationStyle3()
         buildNotificationStyle4()
         buildNotificationStyle5()
-        buildNotificationCustomStyle()
-
         createGroupBuilder()
         buildEmailNotification()
+        buildNotificationCustomStyle()
 
         buttonsListener()
     }
@@ -111,52 +109,13 @@ class MainActivity : AppCompatActivity() {
         super.onRequestPermissionsResult(requestCode, permissions, grantResults)
         if (requestCode == REQUEST_CODE_POST_NOTIFICATIONS) {
             if (grantResults.isNotEmpty() && grantResults[0] == PackageManager.PERMISSION_GRANTED) {
-                // Permiso concedido
-                Toast.makeText(this, "Permiso de notificaciones concedido", Toast.LENGTH_SHORT)
-                    .show()
+                Toast.makeText(this, "Permission granted", Toast.LENGTH_SHORT).show()
             } else {
-                // Permiso denegado
                 Toast.makeText(
-                    this,
-                    "Permiso necesario para mostrar notificaciones",
-                    Toast.LENGTH_SHORT
+                    this, "Permission is required to show notifications", Toast.LENGTH_SHORT
                 ).show()
             }
         }
-    }
-
-    private fun buildNotificationCustomStyle() {
-        val notificationLayout = RemoteViews(packageName, R.layout.notification_small)
-        val notificationLayoutExpanded = RemoteViews(packageName, R.layout.notification_expanded)
-
-        notificationCustomStyle = NotificationCompat.Builder(this, channelId).also {
-            it.setSmallIcon(R.drawable.ic_notification)
-            it.setStyle(NotificationCompat.DecoratedCustomViewStyle())
-            it.setCustomContentView(notificationLayout)
-            it.setCustomBigContentView(notificationLayoutExpanded)
-        }.build()
-    }
-
-    private fun buildEmailNotification() {
-        val myBitmap = R.drawable.image_profile.createBitmap(this)
-
-        emailNotification = NotificationCompat.Builder(this, channelId).also {
-            it.setSmallIcon(R.drawable.ic_notification)
-            it.setContentTitle("user@gmail.com")
-            it.setContentText("Notification de Correo Electrónico")
-            it.setLargeIcon(myBitmap)
-            it.setGroup(GROUP_KEY_EMAIL)
-        }.build()
-    }
-
-    private fun createGroupBuilder() {
-        emailGroup = NotificationCompat.Builder(this, channelId).also {
-            it.setSmallIcon(R.drawable.ic_notification)
-            it.setContentTitle("Grupo de notificaciones")
-            it.setContentText("Usted tiene algunos correos pendientes por leer")
-            it.setGroup(GROUP_KEY_EMAIL)
-            it.setGroupSummary(true)
-        }.build()
     }
 
     private fun buildNotificationStyle1() {
@@ -164,8 +123,8 @@ class MainActivity : AppCompatActivity() {
 
         notificationStyle1 = NotificationCompat.Builder(this, channelId).also {
             it.setSmallIcon(R.drawable.ic_notification)
-            it.setContentTitle("Estilo de notificación #1")
-            it.setContentText("Contenido de la notificación")
+            it.setContentTitle("Title of notification")
+            it.setContentText("Content of notification")
             it.setStyle(
                 NotificationCompat.BigPictureStyle()
                     .bigPicture(myBitmap)
@@ -180,8 +139,8 @@ class MainActivity : AppCompatActivity() {
 
         notificationStyle2 = NotificationCompat.Builder(this, channelId).also {
             it.setSmallIcon(R.drawable.ic_notification)
-            it.setContentTitle("Estilo de notificación #2")
-            it.setContentText("Contenido de la notificación")
+            it.setContentTitle("Title of notification")
+            it.setContentText("Content of notification")
             it.setLargeIcon(myBitmap)
             it.setStyle(NotificationCompat.BigTextStyle().bigText(getString(R.string.large_text)))
         }.build()
@@ -190,13 +149,13 @@ class MainActivity : AppCompatActivity() {
     private fun buildNotificationStyle3() {
         notificationStyle3 = NotificationCompat.Builder(this, channelId).also {
             it.setSmallIcon(R.drawable.ic_notification)
-            it.setContentTitle("usaurio@gmail.com")
-            it.setContentText("Usted tiene 3 nuevos mensajes")
+            it.setContentTitle("user@gmail.com")
+            it.setContentText("You have 3 new messages")
             it.setStyle(
                 NotificationCompat.InboxStyle()
-                    .addLine("Buen día, ha sido notificado para...")
-                    .addLine("Hoy es el cumpleaños de...")
-                    .addLine("Fulanito te invitó a que indiques...")
+                    .addLine("Good morning!, I hope you have a nice day...")
+                    .addLine("Today is your birthday...")
+                    .addLine("Javier invites you to the party...")
             )
         }.build()
     }
@@ -206,7 +165,7 @@ class MainActivity : AppCompatActivity() {
         val soldierIcon = R.drawable.soldier.createBitmap(this)
 
         val message1 = NotificationCompat.MessagingStyle.Message(
-            "Soldado!! No lo vi ayer en la prueba de camuflaje",
+            "Soldier !! I didn't see you yesterday at the camouflage test",
             System.currentTimeMillis(),
             Person.Builder().also {
                 it.setName("Captain")
@@ -215,10 +174,10 @@ class MainActivity : AppCompatActivity() {
         )
 
         val message2 = NotificationCompat.MessagingStyle.Message(
-            "¡Gracias, mi capitán!",
+            "¡Thanks, My captain!",
             System.currentTimeMillis(),
             Person.Builder().also {
-                it.setName("Soldado Ryan")
+                it.setName("Soldier Ryan")
                 it.setIcon(IconCompat.createWithAdaptiveBitmap(soldierIcon))
             }.build()
         )
@@ -228,7 +187,7 @@ class MainActivity : AppCompatActivity() {
             it.setStyle(
                 NotificationCompat.MessagingStyle(
                     Person.Builder().also {
-                        it.setName("Mi Nombre")
+                        it.setName("My name")
                     }.build()
                 )
                     .addMessage(message1)
@@ -241,19 +200,19 @@ class MainActivity : AppCompatActivity() {
     private fun buildNotificationStyle5() {
         val myBitmap = BitmapFactory.decodeResource(resources, R.drawable.image_profile)
 
-        val intent = Intent(this, MainActivity::class.java) // Intent válido
+        val intent = Intent(this, MainActivity::class.java)
         val pendingIntent: PendingIntent? = TaskStackBuilder.create(this).run {
             addNextIntentWithParentStack(intent)
             getPendingIntent(
                 INTENT_REQUEST,
-                PendingIntent.FLAG_UPDATE_CURRENT or PendingIntent.FLAG_IMMUTABLE // Agrega FLAG_IMMUTABLE
+                PendingIntent.FLAG_UPDATE_CURRENT or PendingIntent.FLAG_IMMUTABLE
             )
         }
 
         notificationStyle5 = NotificationCompat.Builder(this, channelId).also {
             it.setSmallIcon(R.drawable.ic_notification)
-            it.setContentTitle("Estilo de notificación #5")
-            it.setContentText("Nueva canción")
+            it.setContentTitle("Custom Media Player")
+            it.setContentText("New song")
             it.setVisibility(NotificationCompat.VISIBILITY_PUBLIC)
 
             if (pendingIntent != null) {
@@ -262,14 +221,48 @@ class MainActivity : AppCompatActivity() {
                 it.addAction(R.drawable.ic_next, "Next", pendingIntent)
             }
 
+            // with library
             it.setStyle(
                 androidx.media.app.NotificationCompat.MediaStyle()
-                    .setShowActionsInCompactView(0, 1, 2) // Índices de las acciones compactas
+                    .setShowActionsInCompactView(0, 1, 2)
             )
             it.setLargeIcon(myBitmap)
         }.build()
     }
 
+    private fun buildEmailNotification() {
+        val myBitmap = R.drawable.image_profile.createBitmap(this)
+
+        emailNotification = NotificationCompat.Builder(this, channelId).also {
+            it.setSmallIcon(R.drawable.ic_notification)
+            it.setContentTitle("user@gmail.com")
+            it.setContentText("Email notification")
+            it.setLargeIcon(myBitmap)
+            it.setGroup(GROUP_KEY_EMAIL)
+        }.build()
+    }
+
+    private fun createGroupBuilder() {
+        emailGroup = NotificationCompat.Builder(this, channelId).also {
+            it.setSmallIcon(R.drawable.ic_notification)
+            it.setContentTitle("Group notifications")
+            it.setContentText("You have some emails pending to read")
+            it.setGroup(GROUP_KEY_EMAIL)
+            it.setGroupSummary(true)
+        }.build()
+    }
+
+    private fun buildNotificationCustomStyle() {
+        val notificationLayout = RemoteViews(packageName, R.layout.notification_small)
+        val notificationLayoutExpanded = RemoteViews(packageName, R.layout.notification_expanded)
+
+        notificationCustomStyle = NotificationCompat.Builder(this, channelId).also {
+            it.setSmallIcon(R.drawable.ic_notification)
+            // it.setStyle(NotificationCompat.DecoratedCustomViewStyle())
+            it.setCustomContentView(notificationLayout)
+            it.setCustomBigContentView(notificationLayoutExpanded)
+        }.build()
+    }
 
     private fun buttonsListener() {
         val notificationManager = NotificationManagerCompat.from(this)
@@ -303,11 +296,11 @@ class MainActivity : AppCompatActivity() {
     }
 
     /**
-     * Verifica si el permiso POST_NOTIFICATIONS ha sido concedido.
+     * Verify if POST_NOTIFICATIONS has been granted.
      */
     private fun checkNotificationPermission(): Boolean {
         return if (Build.VERSION.SDK_INT >= Build.VERSION_CODES.TIRAMISU) {
-            val permission = "android.permission.POST_NOTIFICATIONS" // Nombre explícito del permiso
+            val permission = "android.permission.POST_NOTIFICATIONS"
             if (ContextCompat.checkSelfPermission(
                     this,
                     permission
@@ -315,12 +308,12 @@ class MainActivity : AppCompatActivity() {
             ) {
                 true
             } else {
-                Toast.makeText(this, "Permiso de notificaciones no concedido", Toast.LENGTH_SHORT)
+                Toast.makeText(this, "Permission granted", Toast.LENGTH_SHORT)
                     .show()
                 false
             }
         } else {
-            // Permiso no es requerido en versiones anteriores a Android 13
+            // Permission is not required in Android 13 or lower
             true
         }
     }
